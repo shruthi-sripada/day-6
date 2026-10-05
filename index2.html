@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#f6f5ed">
+	<title>Flan Club | The after-hours dessert kitchen</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+	<style>
+		:root {
+			color-scheme: light;
+			--paper: #f6f5ed;
+			--ink: #253a31;
+			--muted: #65746b;
+			--line: #d9dfd3;
+			--coral: #d95f43;
+			--yellow: #edc566;
+			--white: #fffdf8;
+			font-family: "DM Sans", sans-serif;
+		}
+
+		* { box-sizing: border-box; }
+		[hidden] { display: none !important; }
+		body { margin: 0; background: var(--paper); color: var(--ink); }
+		button, input { font: inherit; }
+		button, a { -webkit-tap-highlight-color: transparent; }
+		a { color: inherit; }
+		.shell { position: relative; z-index: 1; width: min(1180px, calc(100% - 64px)); margin: 0 auto; }
+		.kitchen-doodles { position: fixed; z-index: 2; inset: 0; overflow: hidden; pointer-events: none; }
+		.kitchen-doodle { position: absolute; display: grid; width: 78px; aspect-ratio: 1; place-items: center; border: 2px solid; border-radius: 50%; font-size: 46px; line-height: 1; opacity: .97; animation: utensil-drift 9s ease-in-out infinite; filter: drop-shadow(0 7px 8px #253a3126); will-change: transform; }
+		.doodle-pan { top: 46%; left: 0; border-color: #dc684c; background: #ffd0bd; --tilt: -14deg; --sway: 8deg; --sway-back: -7deg; --float-x: 28px; --return-x: -18px; --rise-y: -34px; --drop-y: 18px; animation-duration: 8.4s; }
+		.doodle-spoon { top: 28%; right: 0; border-color: #388b7e; background: #c5eee3; --tilt: 18deg; --sway: -12deg; --sway-back: 9deg; --float-x: -22px; --return-x: 18px; --rise-y: -42px; --drop-y: 22px; animation-duration: 11s; animation-delay: -2.8s; }
+		.doodle-cupcake { bottom: 9%; left: 0; border-color: #bc8622; background: #ffe69a; --tilt: -8deg; --sway: 13deg; --sway-back: -11deg; --float-x: 20px; --return-x: -24px; --rise-y: -30px; --drop-y: 16px; animation-duration: 9.5s; animation-delay: -5s; }
+		.doodle-bowl { top: 9%; left: 0; border-color: #4586a2; background: #c9e9f4; --tilt: 10deg; --sway: -12deg; --sway-back: 7deg; --float-x: 22px; --return-x: -18px; --rise-y: 26px; --drop-y: -18px; animation-duration: 10.2s; animation-delay: -4s; }
+		.doodle-pancakes { top: 49%; right: 0; border-color: #a9583d; background: #ffd2a0; --tilt: -11deg; --sway: 14deg; --sway-back: -8deg; --float-x: -18px; --return-x: 24px; --rise-y: -28px; --drop-y: 20px; animation-duration: 9.1s; animation-delay: -1.2s; }
+		.doodle-donut { bottom: 9%; right: 0; border-color: #aa4e76; background: #ffd1df; --tilt: 14deg; --sway: -10deg; --sway-back: 12deg; --float-x: -24px; --return-x: 16px; --rise-y: -36px; --drop-y: 14px; animation-duration: 10.8s; animation-delay: -6s; }
+
+		.topbar {
+			height: 78px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid var(--line);
+		}
+		.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; letter-spacing: 0; }
+		.brand-mark { width: 30px; height: 30px; display: grid; place-items: center; color: var(--ink); background: var(--yellow); border-radius: 50%; font-size: 16px; }
+		.top-note { color: var(--muted); font-size: 13px; }
+
+		.intro { padding: 32px 0 20px; display: grid; grid-template-columns: 1fr minmax(260px, 390px); align-items: end; gap: 40px; }
+		.eyebrow { color: var(--coral); font-size: 11px; font-weight: 700; letter-spacing: 0; text-transform: uppercase; }
+		h1, h2, h3, p { margin-top: 0; }
+		h1 { max-width: 650px; margin: 15px 0 0; font: 600 clamp(42px, 5vw, 64px)/.99 "Playfair Display", Georgia, serif; letter-spacing: 0; }
+		h1 em { color: var(--coral); font-weight: 500; }
+		.intro-copy { margin: 0 0 6px; max-width: 335px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+
+		.search-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+		.section-label { font-size: 13px; font-weight: 700; }
+		.search { width: min(300px, 48%); display: flex; align-items: center; gap: 10px; padding: 10px 13px; background: var(--white); border: 1px solid var(--line); border-radius: 4px; }
+		.search svg { flex: 0 0 auto; color: var(--muted); }
+		.search input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ink); background: transparent; font-size: 13px; }
+		.search input::placeholder { color: #87928a; }
+		.search:focus-within { border-color: var(--coral); box-shadow: 0 0 0 2px #d95f4324; }
+
+		.feature { display: grid; grid-template-columns: 1.13fr .87fr; min-height: 260px; margin: 16px 0 24px; overflow: hidden; background: #e4eee3; border: 1px solid #d4e0d2; }
+		.feature-image-wrap { position: relative; min-height: 260px; overflow: hidden; background: #e2dfd2; }
+		.feature-image { width: 100%; height: 100%; min-height: 260px; position: absolute; inset: 0; object-fit: cover; }
+		.feature-image { transition: transform .55s cubic-bezier(.2,.7,.2,1); }
+		.feature:hover .feature-image { transform: scale(1.035); }
+		.feature-content { padding: clamp(20px, 3vw, 34px); display: flex; flex-direction: column; justify-content: center; }
+		.feature-content h2 { margin: 13px 0 15px; font: 600 clamp(31px, 4vw, 48px)/1.08 "Playfair Display", Georgia, serif; letter-spacing: 0; }
+		.meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+		.tag { padding: 6px 9px; border: 1px solid #bdcdbd; border-radius: 2px; color: #465b4d; font-size: 10px; font-weight: 700; letter-spacing: 0; text-transform: uppercase; }
+		.feature-summary { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; margin: 0 0 24px; color: #58675c; font-size: 14px; line-height: 1.7; }
+		.feature-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+		.ingredient-count { color: #58675c; font-size: 12px; }
+		.card-meta { display: flex; align-items: center; gap: 8px; margin: 14px 0 7px; color: var(--coral); font-size: 10px; font-weight: 700; letter-spacing: 0; text-transform: uppercase; }
+		.status { grid-column: 1 / -1; padding: 54px 20px; color: var(--muted); text-align: center; font-size: 14px; }
+		.loader { display: inline-block; width: 18px; height: 18px; margin-right: 8px; vertical-align: -4px; border: 2px solid #d9dfd3; border-top-color: var(--coral); border-radius: 50%; animation: spin .8s linear infinite; }
+
+		.results-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 17px; }
+		.results-heading h2 { margin: 0; font: 600 27px/1.2 "Playfair Display", Georgia, serif; }
+		.result-count { color: var(--muted); font-size: 12px; }
+		.recipe-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 20px; padding-bottom: 76px; }
+		.recipe-card { min-width: 0; cursor: pointer; animation: rise .45s both; }
+		.card-image-wrap { position: relative; aspect-ratio: 1.35; overflow: hidden; background: #e8e5d9; }
+		.card-image { width: 100%; height: 100%; object-fit: cover; transition: transform .45s cubic-bezier(.2,.7,.2,1); }
+		.recipe-card.is-hovered .card-image, .recipe-card:focus-visible .card-image { transform: scale(1.07) rotate(-1deg); }
+		.card-image-wrap::after { content: "♨ FRESH FROM THE OVEN"; position: absolute; top: 12px; right: 12px; padding: 7px 9px; transform: translateY(7px) rotate(3deg) scale(.92); border-radius: 2px; color: #fffdf8; background: var(--coral); opacity: 0; font-size: 9px; font-weight: 700; transition: opacity .2s ease, transform .25s ease; pointer-events: none; }
+		.recipe-card.is-hovered .card-image-wrap::after, .recipe-card:focus-visible .card-image-wrap::after { transform: translateY(0) rotate(3deg) scale(1); opacity: 1; }
+		.recipe-card.pancake-flip { pointer-events: none; animation: pancake-flip .36s cubic-bezier(.2,.7,.2,1) both; }
+		.card-meta { display: flex; align-items: center; gap: 8px; margin: 14px 0 7px; color: var(--coral); font-size: 10px; font-weight: 700; letter-spacing: 0; text-transform: uppercase; }
+		.card-meta span + span::before { content: "/"; margin-right: 8px; color: #a4aaa0; }
+		.recipe-card h3 { margin: 0; font: 600 21px/1.25 "Playfair Display", Georgia, serif; }
+		.card-open { margin-top: 10px; }
+
+		.status strong { display: block; margin-bottom: 8px; color: var(--ink); font: 600 25px "Playfair Display", Georgia, serif; }
+		footer { display: flex; align-items: center; justify-content: space-between; padding: 20px 0 26px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+
+		dialog { width: min(680px, calc(100% - 32px)); max-height: min(86vh, 820px); padding: 0; overflow: auto; border: 1px solid #d9dfd3; background: var(--paper); color: var(--ink); box-shadow: 0 24px 80px #253a3130; }
+		dialog::backdrop { background: #253a3180; backdrop-filter: blur(4px); }
+		.dialog-image { display: block; width: 100%; aspect-ratio: 2 / 1; object-fit: cover; background: #e5e1d6; }
+		.dialog-body { padding: clamp(22px, 5vw, 42px); }
+		.dialog-close { float: right; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 50%; color: var(--ink); background: var(--white); font-size: 20px; cursor: pointer; }
+		.dialog-body h2 { max-width: 520px; margin: 12px 44px 14px 0; font: 600 clamp(30px, 6vw, 44px)/1.08 "Playfair Display", Georgia, serif; }
+		.dialog-body h3 { margin: 27px 0 10px; font: 600 20px "Playfair Display", Georgia, serif; }
+		.ingredient-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 20px; padding: 0; list-style: none; }
+		.ingredient-list li { padding: 9px 0; border-bottom: 1px solid var(--line); color: #58675c; font-size: 13px; }
+		.instructions { white-space: pre-line; color: #58675c; font-size: 14px; line-height: 1.8; }
+		.dialog-links { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 25px; }
+		.dialog-links a { color: var(--coral); font-size: 13px; font-weight: 700; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+
+		@keyframes spin { to { transform: rotate(360deg); } }
+		@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+		@keyframes utensil-drift {
+			0%, 100% { transform: translate(0, 0) rotate(var(--tilt)); }
+			25% { transform: translate(var(--float-x), var(--rise-y)) rotate(var(--sway)); }
+			50% { transform: translate(var(--return-x), -42px) rotate(var(--sway-back)); }
+			75% { transform: translate(var(--float-x), var(--drop-y)) rotate(var(--tilt)); }
+		}
+		@keyframes pancake-flip { 0%, 100% { transform: rotate(0) translateY(0); } 35% { transform: rotate(-3deg) translateY(-8px); } 70% { transform: rotate(3deg) translateY(-4px); } }
+		@media (max-width: 760px) {
+			.kitchen-doodles { display: none; }
+			.shell { width: min(100% - 36px, 560px); }
+			.topbar { height: 66px; }
+			.top-note { font-size: 11px; }
+			.intro { grid-template-columns: 1fr; gap: 16px; padding: 43px 0 30px; }
+			h1 { max-width: 500px; font-size: clamp(46px, 12vw, 68px); }
+			.intro-copy { max-width: 430px; }
+			.feature { grid-template-columns: 1fr; margin: 18px 0 42px; }
+			.feature-image-wrap, .feature-image { min-height: 0; height: auto; aspect-ratio: 1.45; position: relative; }
+			.feature-content { padding: 28px 24px 30px; }
+			.recipe-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; }
+			.recipe-card h3 { font-size: 19px; }
+			.results-heading h2 { font-size: 24px; }
+		}
+		@media (max-width: 440px) {
+			.shell { width: calc(100% - 28px); }
+			.top-note { max-width: 130px; text-align: right; }
+			.search-row { align-items: flex-start; flex-direction: column; gap: 12px; }
+			.search { width: 100%; }
+			.recipe-grid { grid-template-columns: 1fr; gap: 25px; }
+			.card-image-wrap { aspect-ratio: 1.55; }
+			footer { gap: 12px; }
+			.ingredient-list { grid-template-columns: 1fr; }
+		}
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+		}
+	</style>
+</head>
+<body>
+	<div class="kitchen-doodles" aria-hidden="true">
+		<span class="kitchen-doodle doodle-pan">🍳</span>
+		<span class="kitchen-doodle doodle-spoon">🥄</span>
+		<span class="kitchen-doodle doodle-cupcake">🧁</span>
+		<span class="kitchen-doodle doodle-bowl">🥣</span>
+		<span class="kitchen-doodle doodle-pancakes">🥞</span>
+		<span class="kitchen-doodle doodle-donut">🍩</span>
+	</div>
+	<header class="shell topbar">
+		<a class="brand" href="#top" aria-label="Flan Club home"><span class="brand-mark" aria-hidden="true">f</span> FLAN CLUB</a>
+		<span class="top-note">LATE-NIGHT BAKES · CARAMEL & CUSTARD</span>
+	</header>
+
+	<main id="top" class="shell">
+		<section class="intro" aria-labelledby="page-title">
+			<div>
+				<div class="eyebrow">The after-hours dessert kitchen</div>
+				<h1 id="page-title">A little heat.<br>A lot of <em>sweet.</em></h1>
+			</div>
+				<p class="intro-copy">The oven is on and something good is happening. Pull up a stool for caramel custards, soft cakes, and bakes worth sharing.</p>
+		</section>
+
+		<section aria-label="Flan recipes">
+			<div class="search-row">
+				<span class="section-label">What’s coming out of the oven</span>
+				<label class="search" for="recipe-search">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+					<input id="recipe-search" type="search" placeholder="Find your next bake" autocomplete="off">
+				</label>
+			</div>
+
+			<div id="featured"></div>
+			<div class="results-heading" id="results-heading">
+				<h2 id="results-title">From the dessert counter</h2>
+				<span class="result-count" id="result-count"></span>
+			</div>
+			<div class="recipe-grid" id="recipe-grid" aria-live="polite">
+				<div class="status"><span class="loader" aria-hidden="true"></span>Finding something lovely…</div>
+			</div>
+		</section>
+	</main>
+
+	<footer class="shell">
+		<span>WHISK SLOWLY · TASTE OFTEN · SHARE ALWAYS</span>
+		<span>Recipes via TheMealDB</span>
+	</footer>
+
+	<dialog id="recipe-dialog" aria-labelledby="dialog-title">
+		<img class="dialog-image" id="dialog-image" alt="">
+		<div class="dialog-body">
+			<button class="dialog-close" type="button" aria-label="Close recipe">&times;</button>
+			<div class="eyebrow" id="dialog-meta"></div>
+			<h2 id="dialog-title"></h2>
+			<h3>Ingredients</h3>
+			<ul class="ingredient-list" id="dialog-ingredients"></ul>
+			<h3>Method</h3>
+			<p class="instructions" id="dialog-instructions"></p>
+			<div class="dialog-links" id="dialog-links"></div>
+		</div>
+	</dialog>
+
+	<script>
+		const API_URL = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
+		const COLLECTION_SEARCHES = ["flan", "pudding", "tart", "custard"];
+		const featured = document.getElementById("featured");
+		const recipeGrid = document.getElementById("recipe-grid");
+		const resultCount = document.getElementById("result-count");
+		const resultsTitle = document.getElementById("results-title");
+		const searchInput = document.getElementById("recipe-search");
+		const recipeDialog = document.getElementById("recipe-dialog");
+		let currentMeals = [];
+		let requestId = 0;
+		let searchTimer;
+
+		function escapeHtml(value = "") {
+			return String(value).replace(/[&<>"']/g, character => ({
+				"&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+			})[character]);
+		}
+
+		function getIngredients(meal) {
+			const ingredients = [];
+			for (let index = 1; index <= 20; index += 1) {
+				const ingredient = meal[`strIngredient${index}`]?.trim();
+				if (ingredient) {
+					const measure = meal[`strMeasure${index}`]?.trim();
+					ingredients.push({ ingredient, measure });
+				}
+			}
+			return ingredients;
+		}
+
+		function renderFeatured(meal) {
+			const ingredients = getIngredients(meal);
+			featured.innerHTML = `
+				<article class="feature">
+					<div class="feature-image-wrap">
+						<img class="feature-image" src="${escapeHtml(meal.strMealThumb)}" alt="${escapeHtml(meal.strMeal)}" fetchpriority="high">
+					</div>
+					<div class="feature-content">
+						<div class="eyebrow">Straight from the oven</div>
+						<h2>${escapeHtml(meal.strMeal)}</h2>
+						<div class="meta">
+							${meal.strArea ? `<span class="tag">${escapeHtml(meal.strArea)}</span>` : ""}
+							${meal.strCategory ? `<span class="tag">${escapeHtml(meal.strCategory)}</span>` : ""}
+						</div>
+						<p class="feature-summary">${escapeHtml(meal.strInstructions || "A lovely recipe to try at home.")}</p>
+						<div class="feature-bottom">
+							<span class="ingredient-count">${ingredients.length} ingredients</span>
+							<button class="text-button" type="button" data-meal-id="${escapeHtml(meal.idMeal)}">Get the recipe <span class="arrow" aria-hidden="true">→</span></button>
+						</div>
+					</div>
+				</article>`;
+			featured.querySelector("button").addEventListener("click", () => openRecipe(meal));
+		}
+
+		function renderCards(meals) {
+			if (!meals.length) {
+				recipeGrid.innerHTML = `<div class="status"><strong>No recipes just yet.</strong>Try another search and see what turns up.</div>`;
+				resultCount.textContent = "0 recipes";
+				return;
+			}
+
+			recipeGrid.innerHTML = meals.map((meal, index) => `
+				<article class="recipe-card" role="button" tabindex="0" data-meal-id="${escapeHtml(meal.idMeal)}" style="animation-delay:${Math.min(index * 55, 330)}ms">
+					<div class="card-image-wrap"><img class="card-image" src="${escapeHtml(meal.strMealThumb)}" alt="${escapeHtml(meal.strMeal)}" loading="lazy"></div>
+					<div class="card-meta"><span>${escapeHtml(meal.strArea || "From the kitchen")}</span>${meal.strCategory ? `<span>${escapeHtml(meal.strCategory)}</span>` : ""}</div>
+					<h3>${escapeHtml(meal.strMeal)}</h3>
+					<button class="text-button card-open" type="button" tabindex="-1" aria-hidden="true">View recipe <span class="arrow">→</span></button>
+				</article>`).join("");
+
+			recipeGrid.querySelectorAll(".recipe-card").forEach(card => {
+				const meal = meals.find(item => item.idMeal === card.dataset.mealId);
+				card.addEventListener("pointerenter", () => card.classList.add("is-hovered"));
+				card.addEventListener("pointerleave", () => card.classList.remove("is-hovered"));
+				card.addEventListener("focus", () => card.classList.add("is-hovered"));
+				card.addEventListener("blur", () => card.classList.remove("is-hovered"));
+				card.addEventListener("click", () => openRecipeFromCard(card, meal));
+				card.addEventListener("keydown", event => {
+					if (event.key === "Enter" || event.key === " ") {
+						event.preventDefault();
+						openRecipeFromCard(card, meal);
+					}
+				});
+			});
+			resultCount.textContent = `${meals.length} ${meals.length === 1 ? "recipe" : "recipes"}`;
+		}
+
+		function openRecipeFromCard(card, meal) {
+			if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+				openRecipe(meal);
+				return;
+			}
+			card.classList.add("pancake-flip");
+			window.setTimeout(() => {
+				card.classList.remove("pancake-flip");
+				openRecipe(meal);
+			}, 360);
+		}
+
+		function openRecipe(meal) {
+			const ingredients = getIngredients(meal);
+			document.getElementById("dialog-image").src = meal.strMealThumb;
+			document.getElementById("dialog-image").alt = meal.strMeal;
+			document.getElementById("dialog-meta").textContent = [meal.strArea, meal.strCategory].filter(Boolean).join(" / ") || "A recipe to try";
+			document.getElementById("dialog-title").textContent = meal.strMeal;
+			document.getElementById("dialog-ingredients").innerHTML = ingredients.map(({ ingredient, measure }) => `<li>${escapeHtml(measure ? `${measure} ` : "")}${escapeHtml(ingredient)}</li>`).join("");
+			document.getElementById("dialog-instructions").textContent = meal.strInstructions || "No method has been provided for this recipe.";
+
+			const links = [];
+			if (meal.strSource) links.push(`<a href="${escapeHtml(meal.strSource)}" target="_blank" rel="noreferrer">Original recipe ↗</a>`);
+			if (meal.strYoutube) links.push(`<a href="${escapeHtml(meal.strYoutube)}" target="_blank" rel="noreferrer">Watch the video ↗</a>`);
+			document.getElementById("dialog-links").innerHTML = links.join("");
+			recipeDialog.showModal();
+		}
+
+		async function loadMeals(query, showFeatured = false) {
+			const thisRequest = ++requestId;
+			const trimmedQuery = query.trim();
+			resultsTitle.textContent = showFeatured ? "The flan collection" : `Recipes for “${trimmedQuery}”`;
+			recipeGrid.innerHTML = `<div class="status"><span class="loader" aria-hidden="true"></span>Finding something lovely…</div>`;
+			featured.innerHTML = "";
+			document.getElementById("results-heading").hidden = false;
+			recipeGrid.hidden = false;
+			resultCount.textContent = "";
+
+			try {
+				const searchTerms = showFeatured ? COLLECTION_SEARCHES : [trimmedQuery];
+				const mealGroups = await Promise.all(searchTerms.map(async term => {
+					const response = await fetch(`${API_URL}${encodeURIComponent(term)}`);
+					if (!response.ok) throw new Error("The recipe collection is taking a little break.");
+					const data = await response.json();
+					return data.meals || [];
+				}));
+				if (thisRequest !== requestId) return;
+
+				const uniqueMeals = [...new Map(mealGroups.flat().map(meal => [meal.idMeal, meal])).values()];
+				const desserts = uniqueMeals.filter(meal => meal.strCategory === "Dessert");
+				currentMeals = showFeatured && desserts.length ? desserts : uniqueMeals;
+				const featuredMeal = showFeatured
+					? currentMeals.find(meal => meal.strMeal.toLowerCase() === "flan") || currentMeals[0]
+					: null;
+				if (featuredMeal) renderFeatured(featuredMeal);
+				const remainingMeals = featuredMeal
+					? currentMeals.filter(meal => meal.idMeal !== featuredMeal.idMeal)
+					: currentMeals;
+				if (showFeatured && remainingMeals.length === 0) {
+					document.getElementById("results-heading").hidden = true;
+					recipeGrid.hidden = true;
+				} else {
+					renderCards(remainingMeals);
+				}
+			} catch (error) {
+				if (thisRequest !== requestId) return;
+				featured.innerHTML = "";
+				document.getElementById("results-heading").hidden = false;
+				recipeGrid.hidden = false;
+				recipeGrid.innerHTML = `<div class="status"><strong>We couldn’t reach the kitchen.</strong>Please check your connection and try again.</div>`;
+				resultCount.textContent = "";
+			}
+		}
+
+		searchInput.addEventListener("input", () => {
+			clearTimeout(searchTimer);
+			searchTimer = setTimeout(() => {
+				const query = searchInput.value.trim();
+				loadMeals(query || "flan", !query);
+			}, 350);
+		});
+		document.querySelector(".dialog-close").addEventListener("click", () => recipeDialog.close());
+		recipeDialog.addEventListener("click", event => {
+			if (event.target === recipeDialog) recipeDialog.close();
+		});
+		document.addEventListener("keydown", event => {
+			if (event.key === "Escape" && recipeDialog.open) recipeDialog.close();
+		});
+
+		loadMeals("flan", true);
+	</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>External API key demo</title>
+</head>
+<body>
+
+    <h1>Food items</h1>
+    <div id="meals"></div>
+
+    <script>
+        fetch("https://www.themealdb.com/api/json/v1/1/search.php?s=")
+        .then(res => res.json())
+        .then(data => {
+            let meals = data.meals;
+            let output = "";
+
+            // Loop through each meal object returned by the API
+            for(let meal of meals) {
+                output += `
+                    <h2>${meal.strMeal}</h2>
+                    <img src="${meal.strMealThumb}" width="25%">
+                    <p>${meal.strInstructions}</p>
+                    <hr>
+                `;
+            }
+
+            // Insert the generated HTML into the placeholder div
+            document.getElementById("meals").innerHTML = output;
+        })
+        .catch(err => console.error("Error fetching data:", err)); // Added error handling
+    </script>
+    
+</body>
+</html>
